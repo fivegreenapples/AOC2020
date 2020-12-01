@@ -4,7 +4,14 @@ import "testing"
 
 func TestDay1Part1(t *testing.T) {
 
-	testInputs := map[string]string{}
+	testInputs := map[string]string{
+		`1721
+		979
+		366
+		299
+		675
+		1456`: "514579",
+	}
 
 	dayRunner := NewRunner(testing.Verbose())
 
@@ -19,7 +26,14 @@ func TestDay1Part1(t *testing.T) {
 
 func TestDay1Part2(t *testing.T) {
 
-	testInputs := map[string]string{}
+	testInputs := map[string]string{
+		`1721
+		979
+		366
+		299
+		675
+		1456`: "241861950",
+	}
 
 	dayRunner := NewRunner(testing.Verbose())
 
