@@ -6,11 +6,6 @@ import (
 	"github.com/fivegreenapples/AOC2020/utils"
 )
 
-//
-// Create new days with:
-// sed -e 's/3/2/g' template > day2.go; sed -e 's/3/2/g' template_test > day2_test.go
-//
-
 func (r *Runner) Day3Part1(in string) string {
 	mapLines := utils.MultilineCsvToStrings(in, "")
 	numTrees := r.day3CalcTrees(mapLines, utils.Coord{X: 3, Y: 1})

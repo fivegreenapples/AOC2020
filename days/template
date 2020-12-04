@@ -1,16 +1,18 @@
 package days
 
+import "strconv"
+
 //
 // Create new days with:
-// sed -e 's/___/2/g' template > day2.go; sed -e 's/___/2/g' template_test > day2_test.go
+// D=5; sed -e 's/___/'$D'/g' template > day${D}.go; sed -e 's/___/'$D'/g' template_test > day${D}_test.go
 //
 
 func (r *Runner) Day___Part1(in string) string {
 
-	return ""
+	return strconv.Itoa(0)
 }
 
 func (r *Runner) Day___Part2(in string) string {
 
-	return ""
+	return strconv.Itoa(0)
 }

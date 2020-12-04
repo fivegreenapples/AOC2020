@@ -4,7 +4,9 @@ import "testing"
 
 func TestDay___Part1(t *testing.T) {
 
-	testInputs := map[string]string{}
+	testInputs := map[string]string{
+		``: "0",
+	}
 
 	dayRunner := NewRunner(testing.Verbose())
 
@@ -19,7 +21,9 @@ func TestDay___Part1(t *testing.T) {
 
 func TestDay___Part2(t *testing.T) {
 
-	testInputs := map[string]string{}
+	testInputs := map[string]string{
+		``: "0",
+	}
 
 	dayRunner := NewRunner(testing.Verbose())
 
