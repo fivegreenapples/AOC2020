@@ -4,7 +4,7 @@ import "strconv"
 
 //
 // Create new days with:
-// D=5; sed -e 's/___/'$D'/g' template > day${D}.go; sed -e 's/___/'$D'/g' template_test > day${D}_test.go
+// D=5; sed -e 's/___/'$D'/g' template > day${D}.go; sed -e 's/___/'$D'/g' template_test > day${D}_test.go; touch ../inputs/day${D}.txt;
 //
 
 func (r *Runner) Day___Part1(in string) string {
