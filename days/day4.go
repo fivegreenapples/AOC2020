@@ -8,11 +8,6 @@ import (
 	"github.com/fivegreenapples/AOC2020/utils"
 )
 
-//
-// Create new days with:
-// sed -e 's/4/2/g' template > day2.go; sed -e 's/4/2/g' template_test > day2_test.go
-//
-
 const (
 	day4_byr = 0b0000_0001
 	day4_iyr = 0b0000_0010
