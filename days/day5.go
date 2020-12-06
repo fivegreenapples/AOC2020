@@ -11,20 +11,17 @@ import (
 
 func (r *Runner) Day5Part1(in string) string {
 
+	in = strings.ReplaceAll(in, "B", "1")
+	in = strings.ReplaceAll(in, "F", "0")
+	in = strings.ReplaceAll(in, "R", "1")
+	in = strings.ReplaceAll(in, "L", "0")
 	passes := utils.Lines(in)
 
 	maxSeat := math.MinInt64
-	for _, pp := range passes {
-
-		p := pp
-		p = strings.ReplaceAll(p, "B", "1")
-		p = strings.ReplaceAll(p, "F", "0")
-		p = strings.ReplaceAll(p, "R", "1")
-		p = strings.ReplaceAll(p, "L", "0")
-
+	for _, p := range passes {
 		seatID, err := strconv.ParseInt(p, 2, 64)
 		if err != nil {
-			panic(fmt.Sprintf("failed calculating seat id for boarding pass: %s, converted val: %s, error: %s", pp, p, err.Error()))
+			panic(fmt.Sprintf("failed calculating seat id for boarding pass %s: %s", p, err.Error()))
 		}
 
 		if int(seatID) > maxSeat {
@@ -37,22 +34,19 @@ func (r *Runner) Day5Part1(in string) string {
 
 func (r *Runner) Day5Part2(in string) string {
 
+	in = strings.ReplaceAll(in, "B", "1")
+	in = strings.ReplaceAll(in, "F", "0")
+	in = strings.ReplaceAll(in, "R", "1")
+	in = strings.ReplaceAll(in, "L", "0")
 	passes := utils.Lines(in)
 
 	maxSeat := math.MinInt64
 	minSeat := math.MaxInt64
 	allSeats := map[int]bool{}
-	for _, pp := range passes {
-
-		p := pp
-		p = strings.ReplaceAll(p, "B", "1")
-		p = strings.ReplaceAll(p, "F", "0")
-		p = strings.ReplaceAll(p, "R", "1")
-		p = strings.ReplaceAll(p, "L", "0")
-
+	for _, p := range passes {
 		seatID, err := strconv.ParseInt(p, 2, 64)
 		if err != nil {
-			panic(fmt.Sprintf("failed calculating seat id for boarding pass: %s, converted val: %s, error: %s", pp, p, err.Error()))
+			panic(fmt.Sprintf("failed calculating seat id for boarding pass %s: %s", p, err.Error()))
 		}
 
 		allSeats[int(seatID)] = true
