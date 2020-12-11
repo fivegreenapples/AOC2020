@@ -9,9 +9,17 @@ type Coord struct {
 
 var Origin = Coord{X: 0, Y: 0}
 var Up = Coord{X: 0, Y: -1}
+var UpLeft = Coord{X: -1, Y: -1}
+var UpRight = Coord{X: 1, Y: -1}
 var Right = Coord{X: 1, Y: 0}
 var Down = Coord{X: 0, Y: 1}
+var DownLeft = Coord{X: -1, Y: 1}
+var DownRight = Coord{X: 1, Y: 1}
 var Left = Coord{X: -1, Y: 0}
+
+var Cardinals = []Coord{Up, Right, Down, Left}
+var Ordinals = []Coord{UpLeft, UpRight, DownRight, DownLeft}
+var CardinalsAndOrdinals = []Coord{UpLeft, Up, UpRight, Right, DownRight, Down, DownLeft, Left}
 
 func (c Coord) Manhattan() int {
 	return int(math.Abs(float64(c.X)) + math.Abs(float64(c.Y)))
@@ -53,7 +61,23 @@ func (c Coord) Simplify() Coord {
 
 	lcf := LargestCommonFactor(absX, absY)
 	return Coord{c.X / lcf, c.Y / lcf}
+}
 
+func (c Coord) Adjacents() []Coord {
+	out := make([]Coord, 8)
+	out[0] = c.Add(UpLeft)
+	out[1] = c.Add(Up)
+	out[2] = c.Add(UpRight)
+	out[3] = c.Add(Left)
+	out[4] = c.Add(Right)
+	out[5] = c.Add(DownLeft)
+	out[6] = c.Add(Down)
+	out[7] = c.Add(DownRight)
+	return out
+}
+
+func (c Coord) IsInside(min, max Coord) bool {
+	return c.X >= min.X && c.X <= max.X && c.Y >= min.Y && c.Y <= max.Y
 }
 
 func ExtentsOfIntMap(in map[Coord]int) (min, max Coord) {
