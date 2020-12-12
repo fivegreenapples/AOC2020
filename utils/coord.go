@@ -1,6 +1,9 @@
 package utils
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 type Coord struct {
 	X int
@@ -23,6 +26,34 @@ var CardinalsAndOrdinals = []Coord{UpLeft, Up, UpRight, Right, DownRight, Down, 
 
 func (c Coord) Manhattan() int {
 	return int(math.Abs(float64(c.X)) + math.Abs(float64(c.Y)))
+}
+
+func (c Coord) Scale(amount int) Coord {
+	return Coord{
+		c.X * amount,
+		c.Y * amount,
+	}
+}
+func (c Coord) RotateClockwise(degrees int) Coord {
+	degrees = degrees % 360
+	if degrees < 0 {
+		degrees += 360
+	}
+	switch degrees {
+	case 0:
+	case 90:
+		c.X, c.Y = -c.Y, c.X
+	case 180:
+		c.X, c.Y = -c.X, -c.Y
+	case 270:
+		c.X, c.Y = c.Y, -c.X
+	default:
+		panic(fmt.Errorf("unhandled number of degrees: %d", degrees))
+	}
+	return c
+}
+func (c Coord) RotateAntiClockwise(degrees int) Coord {
+	return c.RotateClockwise(-degrees)
 }
 
 func (c Coord) Add(cc Coord) Coord {
