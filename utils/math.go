@@ -68,13 +68,9 @@ func PrimeFactors(val int) []int {
 		return []int{1}
 	}
 
-	if val > primes[len(primes)-1] {
-		panic(fmt.Errorf("can't factorise %d as greater than largest known prime (%d)", val, primes[len(primes)-1]))
-	}
-
 	primeFactors := []int{}
 	pIdx := 0
-	for {
+	for pIdx < len(primes) {
 
 		if val%primes[pIdx] != 0 {
 			pIdx++
@@ -87,6 +83,10 @@ func PrimeFactors(val int) []int {
 		if val == 1 {
 			break
 		}
+	}
+
+	if val > 1 {
+		panic(fmt.Errorf("can't factorise %d as it's not completely factored by primes up to %d", val, primes[len(primes)-1]))
 	}
 
 	return primeFactors
@@ -116,4 +116,22 @@ func LargestCommonFactor(a, b int) int {
 
 	return cf
 
+}
+
+func LowestCommonMultiple(a, b int) int {
+	pfA := PrimeFactors(a)
+	pfB := PrimeFactors(b)
+
+	uniqueFactors := map[int]struct{}{}
+	for _, pf := range pfA {
+		uniqueFactors[pf] = struct{}{}
+	}
+	for _, pf := range pfB {
+		uniqueFactors[pf] = struct{}{}
+	}
+	multiple := 1
+	for f := range uniqueFactors {
+		multiple *= f
+	}
+	return multiple
 }
