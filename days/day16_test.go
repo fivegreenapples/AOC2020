@@ -33,9 +33,9 @@ func TestDay16Part1(t *testing.T) {
 func TestDay16Part2(t *testing.T) {
 
 	testInputs := map[string]string{
-		`class: 0-1 or 4-19
-		row: 0-5 or 8-19
-		seat: 0-13 or 16-19
+		`a: 0-1 or 4-19
+		departure b: 0-5 or 8-19
+		departure c: 0-13 or 16-19
 		
 		your ticket:
 		11,12,13
@@ -43,7 +43,7 @@ func TestDay16Part2(t *testing.T) {
 		nearby tickets:
 		3,9,18
 		15,1,5
-		5,14,9`: "row,class,seat",
+		5,14,9`: "143",
 	}
 
 	dayRunner := NewRunner(testing.Verbose())
