@@ -1,9 +1,7 @@
 package days
 
 import (
-	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/fivegreenapples/AOC2020/utils"
 )
@@ -19,10 +17,8 @@ func (r *Runner) Day15Part2(in string) string {
 func (r *Runner) day15Process(in string, maxIdx int) int {
 
 	startingNumbers := utils.CsvToInts(in)
-	n := time.Now()
 	lastLastSeen := make([]int32, maxIdx)
 	lastSeen := make([]int32, maxIdx)
-	fmt.Println(time.Now().Sub(n))
 	for idx, num := range startingNumbers {
 		lastLastSeen[num] = int32(idx) + 1
 		lastSeen[num] = int32(idx) + 1
