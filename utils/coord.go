@@ -169,3 +169,16 @@ func ExtentsOfStringMap(in map[Coord]string) (min, max Coord) {
 	}
 	return min, max
 }
+
+func Foreach2D(min, max Coord, cb func(Coord)) {
+
+	for x := min.X; x <= max.X; x++ {
+		for y := min.Y; y <= max.Y; y++ {
+			cb(Coord{
+				X: x,
+				Y: y,
+			})
+		}
+	}
+
+}

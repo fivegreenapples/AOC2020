@@ -1,12 +1,18 @@
 package utils
 
-import "math"
+import (
+	"math"
+)
 
 type Coord3d struct {
 	X int
 	Y int
 	Z int
 }
+
+var Origin3d = Coord3d{X: 0, Y: 0, Z: 0}
+var In = Coord3d{X: 0, Y: 0, Z: 1}
+var Out = Coord3d{X: 0, Y: 0, Z: -1}
 
 func (c Coord3d) Manhattan() int {
 	return int(math.Abs(float64(c.X)) + math.Abs(float64(c.Y)) + math.Abs(float64(c.Z)))
@@ -32,6 +38,25 @@ func (c Coord3d) TwoD() Coord {
 		c.X,
 		c.Y,
 	}
+}
+
+func (c Coord3d) Scale(amount int) Coord3d {
+	return Coord3d{
+		c.X * amount,
+		c.Y * amount,
+		c.Z * amount,
+	}
+}
+
+func (c Coord3d) Adjacents() []Coord3d {
+	out := []Coord3d{}
+	Foreach3D(c.Sub(Coord3d{1, 1, 1}), c.Add(Coord3d{1, 1, 1}), func(pos Coord3d) {
+		if pos == c {
+			return
+		}
+		out = append(out, pos)
+	})
+	return out
 }
 
 func ExtentsOf3DIntMap(in map[Coord3d]int) (min, max Coord3d) {
@@ -83,4 +108,19 @@ func ExtentsOf3DBoolMap(in map[Coord3d]bool) (min, max Coord3d) {
 		}
 	}
 	return min, max
+}
+
+func Foreach3D(min, max Coord3d, cb func(Coord3d)) {
+	for z := min.Z; z <= max.Z; z++ {
+		for y := min.Y; y <= max.Y; y++ {
+			for x := min.X; x <= max.X; x++ {
+				cb(Coord3d{
+					X: x,
+					Y: y,
+					Z: z,
+				})
+			}
+		}
+	}
+
 }
