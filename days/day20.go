@@ -73,6 +73,8 @@ func (t *d20Tile) calcMatchAgainst(tt d20Tile) {
 	if numMatches > 1 {
 		panic(fmt.Errorf("too many matches for tile %d against %d", t.id, tt.id))
 	}
+
+	t.calcCornerStatus()
 }
 
 func (t *d20Tile) calcCornerStatus() {
@@ -162,10 +164,6 @@ func (r *Runner) Day20Part1(in string) string {
 		}
 	}
 
-	for x := range tiles {
-		tiles[x].calcCornerStatus()
-	}
-
 	cornerProduct := 1
 	for _, t := range tiles {
 		if t.isCorner {
@@ -213,10 +211,6 @@ func (r *Runner) Day20Part2(in string) string {
 			}
 			tiles[x].calcMatchAgainst(tY)
 		}
-	}
-
-	for x := range tiles {
-		tiles[x].calcCornerStatus()
 	}
 
 	// Find a corner, and create tile map
@@ -329,7 +323,9 @@ func (r *Runner) Day20Part2(in string) string {
 
 	}
 
-	d20PrintGrid(pixels)
+	if r.verbose {
+		d20PrintGrid(pixels)
+	}
 
 	monster := [][]byte{
 		[]byte(`                  # `),
@@ -337,8 +333,8 @@ func (r *Runner) Day20Part2(in string) string {
 		[]byte(` #  #  #  #  #  #   `),
 	}
 
+	// Try all 8 orientations to find monsters. Stop as soon as we have at least one monster.
 	numMonsters := 0
-
 	for r := 0; r < 4; r++ {
 		numMonsters = d20CountPatternInGrid(pixels, monster)
 		if numMonsters > 0 {
@@ -346,7 +342,6 @@ func (r *Runner) Day20Part2(in string) string {
 		}
 		pixels = d20RotateGrid(pixels)
 	}
-
 	if numMonsters == 0 {
 		pixels = d20FlipGrid(pixels)
 		for r := 0; r < 4; r++ {
@@ -361,7 +356,9 @@ func (r *Runner) Day20Part2(in string) string {
 		return "no monsters found :("
 	}
 
-	d20PrintGridWithPattern(pixels, monster)
+	if r.verbose {
+		d20PrintGridWithPattern(pixels, monster)
+	}
 
 	numWaves := d20CountByteInGrid(pixels, '#') - numMonsters*d20CountByteInGrid(monster, '#')
 	return strconv.Itoa(numWaves)
@@ -387,6 +384,7 @@ func d20CountByteInGrid(grid [][]byte, pattern byte) int {
 
 func d20CountPatternInGrid(grid [][]byte, pattern [][]byte) int {
 
+	// This assumes the patterns don't overlap
 	count := 0
 	for rowIdx := 0; rowIdx < len(grid)-len(pattern)+1; rowIdx++ {
 		lineIndices := d20IndexAll(grid[rowIdx], pattern[0])
@@ -469,6 +467,10 @@ func d20PrintGrid(grid [][]byte) {
 }
 
 func d20PrintGridWithPattern(grid, pattern [][]byte) {
+	const (
+		PURPLE = "\033[0;35m"
+		CLEAR  = "\033[0m"
+	)
 	for rowIdx := 0; rowIdx < len(grid)-len(pattern)+1; rowIdx++ {
 		lineIndices := d20IndexAll(grid[rowIdx], pattern[0])
 		for p := 1; p < len(pattern); p++ {
@@ -497,7 +499,15 @@ func d20PrintGridWithPattern(grid, pattern [][]byte) {
 						}
 					}
 				}
-				fmt.Println(string(thisLine))
+				colourfulString := ""
+				for _, b := range thisLine {
+					if b == 'O' {
+						colourfulString += PURPLE + "O" + CLEAR
+					} else {
+						colourfulString += string(b)
+					}
+				}
+				fmt.Println(colourfulString)
 			}
 			rowIdx += len(pattern) - 1
 		} else {
