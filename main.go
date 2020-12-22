@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"runtime/pprof"
 	"strconv"
 
 	"github.com/fivegreenapples/AOC2020/days"
@@ -15,8 +16,17 @@ func main() {
 	day := flag.Int("d", 0, "Day of Advent")
 	verbose := flag.Bool("v", false, "Verbosity")
 	part := flag.Int("p", 0, "Part")
-	input := flag.String("i", "", "Input file")
+	cpuprofile := flag.String("profile", "", "File for cpu profile")
 	flag.Parse()
+
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			fmt.Printf("Error: couldn't create cpu profile: %v\n", err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 
 	if *day <= 0 {
 		flag.Usage()
@@ -25,23 +35,13 @@ func main() {
 
 	var puzzleInput string
 
-	if *input == "" {
-		// with no input, we attempt to auto find the input file.
-		tryFile := "inputs/day" + strconv.Itoa(*day) + ".txt"
-		_, err := os.Stat(tryFile)
-		if err == nil {
-			*input = tryFile
-		}
+	inputFile := "inputs/day" + strconv.Itoa(*day) + ".txt"
+	puzzleInputBytes, err := ioutil.ReadFile(inputFile)
+	if err != nil {
+		fmt.Printf("Error: couldn't read input file: %v\n", err)
+		os.Exit(2)
 	}
-
-	if *input != "" {
-		puzzleInputBytes, err := ioutil.ReadFile(*input)
-		if err != nil {
-			fmt.Printf("Error: couldn't read input file: %v\n", err)
-			os.Exit(2)
-		}
-		puzzleInput = string(puzzleInputBytes)
-	}
+	puzzleInput = string(puzzleInputBytes)
 
 	runner := days.NewRunner(*verbose)
 

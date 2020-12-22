@@ -16,7 +16,7 @@ func d22NewGameOfRecursiveCombat(p1, p2 []int) *d22RecursiveCombat {
 				insertIdx: len(p2),
 			},
 		},
-		seenHands: map[string]bool{},
+		seenHands: map[[51]int]bool{},
 		recurse:   true,
 	}
 
@@ -38,7 +38,7 @@ func d22NewGameOfCombat(p1, p2 []int) *d22RecursiveCombat {
 				insertIdx: len(p2),
 			},
 		},
-		seenHands: map[string]bool{},
+		seenHands: map[[51]int]bool{},
 		recurse:   false,
 	}
 
@@ -55,13 +55,13 @@ type d22PlayerHand struct {
 
 type d22RecursiveCombat struct {
 	hands     [2]d22PlayerHand
-	seenHands map[string]bool
+	seenHands map[[51]int]bool
 	recurse   bool
 }
 
 func (c *d22RecursiveCombat) playToCompletion() int {
 	for !c.isWon() {
-		handHash := c.hands[0].String() + "|" + c.hands[1].String()
+		handHash := c.hash()
 		if c.seenHands[handHash] {
 			return 0
 		}
@@ -70,6 +70,23 @@ func (c *d22RecursiveCombat) playToCompletion() int {
 	}
 	return c.winnerIdx()
 }
+
+func (c *d22RecursiveCombat) hash() [51]int {
+	out := [51]int{}
+
+	offset := 0
+	for i := range []int{0, 1} {
+
+		for idx := c.hands[i].takeIdx; idx < c.hands[i].insertIdx; idx++ {
+			out[offset] = c.hands[i].cards[idx%len(c.hands[i].cards)]
+			offset++
+		}
+		offset++ // leave one integer gap between hands
+	}
+
+	return out
+}
+
 func (c *d22RecursiveCombat) playRound() {
 
 	var winnerIdx int
@@ -80,14 +97,14 @@ func (c *d22RecursiveCombat) playRound() {
 		for i := range []int{0, 1} {
 			subStacks[i] = []int{}
 			startIdx := c.hands[i].takeIdx + 1
-			for idx := startIdx; idx < startIdx+c.hands[i].cards[c.hands[i].takeIdx]; idx++ {
+			for idx := startIdx; idx < startIdx+c.hands[i].cards[c.hands[i].takeIdx%len(c.hands[i].cards)]; idx++ {
 				subStacks[i] = append(subStacks[i], c.hands[i].cards[idx%len(c.hands[i].cards)])
 			}
 		}
 		subGame := d22NewGameOfRecursiveCombat(subStacks[0], subStacks[1])
 		winnerIdx = subGame.playToCompletion()
 
-	} else if c.hands[0].cards[c.hands[0].takeIdx] > c.hands[1].cards[c.hands[1].takeIdx] {
+	} else if c.hands[0].cards[c.hands[0].takeIdx%len(c.hands[0].cards)] > c.hands[1].cards[c.hands[1].takeIdx%len(c.hands[1].cards)] {
 
 		winnerIdx = 0
 
@@ -102,13 +119,13 @@ func (c *d22RecursiveCombat) playRound() {
 	winner := &c.hands[winnerIdx]
 	loser := &c.hands[loserIdx]
 
-	winner.cards[winner.insertIdx] = winner.cards[winner.takeIdx]
-	winner.insertIdx = (winner.insertIdx + 1) % len(winner.cards)
-	winner.cards[winner.insertIdx] = loser.cards[loser.takeIdx]
-	winner.insertIdx = (winner.insertIdx + 1) % len(winner.cards)
+	winner.cards[winner.insertIdx%len(winner.cards)] = winner.cards[winner.takeIdx%len(winner.cards)]
+	winner.insertIdx++
+	winner.cards[winner.insertIdx%len(winner.cards)] = loser.cards[loser.takeIdx%len(loser.cards)]
+	winner.insertIdx++
 
-	c.hands[0].takeIdx = (c.hands[0].takeIdx + 1) % len(c.hands[0].cards)
-	c.hands[1].takeIdx = (c.hands[1].takeIdx + 1) % len(c.hands[1].cards)
+	c.hands[0].takeIdx++
+	c.hands[1].takeIdx++
 }
 
 func (c *d22RecursiveCombat) isWon() bool {
@@ -135,10 +152,7 @@ func (c *d22RecursiveCombat) String() string {
 
 func (h d22PlayerHand) canRecurse() bool {
 	stackLength := h.insertIdx - h.takeIdx
-	if stackLength <= 0 {
-		stackLength += len(h.cards)
-	}
-	return (stackLength - 1) >= h.cards[h.takeIdx]
+	return (stackLength - 1) >= h.cards[h.takeIdx%len(h.cards)]
 }
 
 func (h d22PlayerHand) hasLost() bool {
@@ -146,17 +160,11 @@ func (h d22PlayerHand) hasLost() bool {
 }
 
 func (h d22PlayerHand) score() int {
-	idx := h.insertIdx
 	multiplier := 1
 	score := 0
-	for {
-		idx = (idx - 1 + len(h.cards)) % len(h.cards)
-		score += h.cards[idx] * multiplier
+	for idx := h.insertIdx - 1; idx >= h.takeIdx; idx-- {
+		score += h.cards[idx%len(h.cards)] * multiplier
 		multiplier++
-
-		if idx == h.takeIdx {
-			break
-		}
 	}
 	return score
 }
@@ -167,13 +175,8 @@ func (h d22PlayerHand) String() string {
 		return out
 	}
 
-	idx := h.takeIdx
-	for {
-		out += fmt.Sprintf("%d ", h.cards[idx])
-		idx = (idx + 1) % len(h.cards)
-		if idx == h.insertIdx {
-			break
-		}
+	for idx := h.takeIdx; idx < h.insertIdx; idx++ {
+		out += fmt.Sprintf("%d ", h.cards[idx%len(h.cards)])
 	}
 
 	return out
